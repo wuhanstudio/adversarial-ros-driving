@@ -5,6 +5,8 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 # ROS Image message -> OpenCV2 image converter
 from cv_bridge import CvBridge
+import utils
+import matplotlib.pyplot as plt
 
 import cv2
 
@@ -39,20 +41,23 @@ class RosTensorFlow():
     def callback(self, image_msg):
         cv_image = self._cv_bridge.imgmsg_to_cv2(image_msg, "bgr8")
         cv_image = cv2.resize(cv_image, (320, 160), interpolation = cv2.INTER_AREA)
+        cv_image = utils.preprocess(cv_image) # apply the preprocessing
+        # plt.imshow(cv_image)
+        # plt.show()
+        
         with self.graph.as_default():
             noise = self.epsilon * self.sess.run(self.delta, feed_dict={self.model.input:np.array([cv_image])})
             noise = noise.reshape(160, 320, 3)
-            no_angle = self.epsilon * self.sess.run(self.model.output, feed_dict={self.model.input:np.array([cv_image])})
+            no_angle = self.sess.run(self.model.output, feed_dict={self.model.input:np.array([cv_image])})
             angle = self.epsilon * self.sess.run(self.model.output, feed_dict={self.model.input:np.array([cv_image+noise])})
-            # cv_image = cv_image + noise
-            print(no_angle[0][0])
-            print(angle[0][0])
+            cv_image = cv_image + noise
+            print('{0} --> {1}'.format(no_angle[0][0], angle[0][0]))
 
             msg = Twist()
             msg.linear.x = 0.2
             msg.linear.y = 0
             msg.linear.z = 0
-            msg.angular.z = angle[0][0]
+            msg.angular.z = no_angle[0][0]
             self._pub.publish(msg)
 
 
