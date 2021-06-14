@@ -89,10 +89,10 @@
       <pose>-0.051932 0.049601 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
-      <sim_time>94 640000000</sim_time>
-      <real_time>95 574912488</real_time>
-      <wall_time>1622060482 439435496</wall_time>
-      <iterations>94640</iterations>
+      <sim_time>129 579000000</sim_time>
+      <real_time>36 580957724</real_time>
+      <wall_time>1623686836 949185436</wall_time>
+      <iterations>34939</iterations>
       <model name='my_ground_plane'>
         <pose>-0.051932 0.049601 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -106,13 +106,45 @@
       <light name='sun'>
         <pose>0 0 10 0 -0 0</pose>
       </light>
+      <light name='user_directional_light_0'>
+        <pose>0.539041 -2.73669 1 0 -0 0</pose>
+      </light>
+      <light name='user_directional_light_1'>
+        <pose>-0.067142 2.34146 1 0 -0 0</pose>
+      </light>
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>2.84196 -7.53809 4.83223 0 0.589796 1.9162</pose>
+        <pose>2.83403 -7.54094 4.83223 0 0.589796 1.9162</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+    <light name='user_directional_light_0' type='directional'>
+      <pose>0.539041 -2.73669 1 0 -0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <direction>0.1 0.1 -0.9</direction>
+      <attenuation>
+        <range>20</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <cast_shadows>1</cast_shadows>
+    </light>
+    <light name='user_directional_light_1' type='directional'>
+      <pose>-0.067142 2.34146 1 0 -0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <direction>0.1 0.1 -0.9</direction>
+      <attenuation>
+        <range>20</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <cast_shadows>1</cast_shadows>
+    </light>
   </world>
 </sdf>

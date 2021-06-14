@@ -18,7 +18,7 @@ def crop(image):
     """
     Crop the image (removing the sky at the top and the car front at the bottom)
     """
-    return image[60:-25, :, :] # remove the sky and the car front
+    return image[80:, :, :] # remove the sky and the car front
 
 
 def resize(image):
@@ -125,11 +125,12 @@ def augument(data_dir, center, left, right, steering_angle, range_x=100, range_y
     Generate an augumented image and adjust steering angle.
     (The steering angle is associated with the center image)
     """
-    image, steering_angle = choose_image(data_dir, center, left, right, steering_angle)
+    # image, steering_angle = choose_image(data_dir, center, left, right, steering_angle)
+    image = load_image(data_dir, center)
     image, steering_angle = random_flip(image, steering_angle)
-    image, steering_angle = random_translate(image, steering_angle, range_x, range_y)
-    image = random_shadow(image)
-    image = random_brightness(image)
+    # image, steering_angle = random_translate(image, steering_angle, range_x, range_y)
+    # image = random_shadow(image)
+    # image = random_brightness(image)
     return image, steering_angle
 
 
