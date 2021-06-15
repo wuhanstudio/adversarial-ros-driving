@@ -18,8 +18,8 @@ class LineFollower(object):
     def __init__(self):
         self.bridge_object = CvBridge()
         self.bias = 0
-        self.image_sub = rospy.Subscriber("/camera/rgb/image_raw",Image,self.camera_callback)
-        self._pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+        self.image_sub = None
+        self._pub = None
 
     def camera_callback(self,data):
         try:
@@ -87,6 +87,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Line Following')
     parser.add_argument('--camera', help='camera position', choices=['left', 'center', 'right'], type=str, required=True)
+    parser.add_argument('--env', help='environment', choices=['gazebo', 'turtlebot'], type=str, required=True)
     args = parser.parse_args()
 
     print('Following the {0} of the lane'.format(args.camera))
@@ -101,6 +102,14 @@ def main():
         line_follower_object.bias = 0
     if args.camera == 'right':
         line_follower_object.bias = 40
+
+    if args.env == 'gazebo':
+        image_topic = "/camera/rgb/image_raw"
+    if args.env == 'turtlebot':       
+        image_topic = "/raspicam_node/image_raw"
+
+    line_follower_object.image_sub = rospy.Subscriber(image_topic, Image,line_follower_object.camera_callback)
+    line_follower_object._pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
 
     rate = rospy.Rate(5)
 
