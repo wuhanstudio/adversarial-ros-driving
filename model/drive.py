@@ -8,6 +8,7 @@ import rospy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Int32
+from std_msgs.msg import Float64MultiArray
 from std_msgs.msg import String
 
 # Image Processing
@@ -50,19 +51,23 @@ class RosTensorFlow():
         self._cv_bridge = CvBridge()
 
         # Input Image
-        self._sub = rospy.Subscriber(image_topic, Image, self.input_callback, queue_size=1)
+        self.input_sub = rospy.Subscriber(image_topic, Image, self.input_callback, queue_size=10)
+
         # Output steering angle
-        self._pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+        self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+
+        # Output the attack result
+        self.cmd_vel_attack_pub = rospy.Publisher('/cmd_vel_attack', Float64MultiArray, queue_size=10)
 
         # Activate attacks based on the topic
-        self._attack_sub = rospy.Subscriber('/attack', Int32, self.attack_callback, queue_size=1)
+        self._attack_sub = rospy.Subscriber('/attack', Int32, self.attack_callback, queue_size=10)
         self.attack = 0
 
         # Publish images to the web UI
-        self.raw_pub = rospy.Publisher('/raw_img', String, queue_size=1)
-        self.input_pub = rospy.Publisher('/input_img', String, queue_size=1)
-        self.perturb_pub = rospy.Publisher('/perturb_img', String, queue_size=1)
-        self.adv_pub = rospy.Publisher('/adv_img', String, queue_size=1)
+        self.raw_pub = rospy.Publisher('/raw_img', String, queue_size=10)
+        self.input_pub = rospy.Publisher('/input_img', String, queue_size=10)
+        self.perturb_pub = rospy.Publisher('/perturb_img', String, queue_size=10)
+        self.adv_pub = rospy.Publisher('/adv_img', String, queue_size=10)
 
     def publish_image(self, cv_image, pub_topic):
         # _, buffer = cv2.imencode('.jpg', cv_image)
@@ -109,6 +114,12 @@ class RosTensorFlow():
 
                 angle = self.epsilon * self.sess.run(self.model.output, feed_dict={self.model.input:np.array([perturb + input_cv_image])})
                 no_attack_angle = self.sess.run(self.model.output, feed_dict={self.model.input:np.array([input_cv_image])})
+
+                array = [no_attack_angle, angle]
+                attack_res = Float64MultiArray() 
+                attack_res.data = array
+                self.cmd_vel_attack_pub.publish(attack_res)
+
                 print('{0} --> {1}'.format(no_attack_angle[0][0], angle[0][0]))
             else:
                 angle = self.sess.run(self.model.output, feed_dict={self.model.input:np.array([input_cv_image])})
@@ -119,7 +130,7 @@ class RosTensorFlow():
             msg.linear.y = 0
             msg.linear.z = 0
             msg.angular.z = angle[0][0]
-            self._pub.publish(msg)
+            self.cmd_vel_pub.publish(msg)
 
 
     def main(self):

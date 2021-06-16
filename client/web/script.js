@@ -160,8 +160,8 @@ var options = {
         // range: XAXISRANGE,
     },
     yaxis: {
-        min: -100,
-        max: 100,
+        min: -200,
+        max: 200,
         labels: {
             style: {
                 fontSize: '18px',
@@ -229,24 +229,25 @@ $(document).ready(function () {
 
     var listener = new ROSLIB.Topic({
         ros : ros,
-        name : '/cmd_vel',
-        messageType : 'geometry_msgs/Twist'
-      });
+        name : '/cmd_vel_attack',
+        messageType : 'std_msgs/Float64MultiArray'
+    });
     
     listener.subscribe(function(message) {
-    // console.log('Received message on ' + listener.name + ': ' + message.angular.z);
-    // $("#attack_res").text("Attack: From " + parseFloat(message.angular.z).toFixed(2) + ' to ' + parseFloat(message.linear.z).toFixed(2) );
+        window.data = message.data
+        console.log('Received message on ' + listener.name + ': ' + message.data[0]);
+        // $("#attack_res").text("Attack: From " + parseFloat(message.angular.z).toFixed(2) + ' to ' + parseFloat(message.linear.z).toFixed(2) );
 
-    steer_data.push(parseFloat(message.angular.z) * 100);
-    adv_data.push(parseFloat(message.angular.z) * 100 + 50);
-    if (steer_data.length > 50) {
-        steer_data.shift();
-    }
-    if (adv_data.length > 50) {
-        adv_data.shift();
-    }
+        steer_data.push(message.data[0] * 100);
+        adv_data.push(message.data[1] * 100);
+        if (steer_data.length > 50) {
+            steer_data.shift();
+        }
+        if (adv_data.length > 50) {
+            adv_data.shift();
+        }
 
-    chart.updateSeries([{ data: steer_data }, { data: adv_data }]);
-    // listener.unsubscribe();
+        chart.updateSeries([{ data: steer_data }, { data: adv_data }]);
+        // listener.unsubscribe();
     });
 });
