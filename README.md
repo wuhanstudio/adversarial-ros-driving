@@ -28,17 +28,18 @@
 
 ```
 $ sudo apt install ros-noetic-desktop
-$ sudo apt install ros-noetic-rosbridge-suite
+$ sudo apt install ros-noetic-rosbridge-suite ros-noetic-turtlebot3-simulations ros-noetic-turtlebot3-gazebo
 ```
 
 #### Step 1: Setup  the TurtleBot
 
 ```
 $ cd ros_ws
+$ rosdep install --from-paths src --ignore-src -r -y
 $ catkin_make
 $ source devel/setup.sh
 $ export TURTLEBOT3_MODEL=waffle
-$ roslaunch turtlebot3_gazebo turtlebot3_lane_world.launch
+$ roslaunch turtlebot3_lane turtlebot3_lane.launch
 ```
 
 #### Step 2: Setup the server
