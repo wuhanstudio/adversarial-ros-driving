@@ -48,9 +48,9 @@ $ roslaunch turtlebot3_lane turtlebot3_lane.launch
 $ roslaunch rosbridge_server rosbridge_websocket.launch
 $ cd model
 # For real turtlebot3
-$ python3 drive.py --env turtlebot
+$ python3 drive.py --env turtlebot --model model.h5
 # For Gazebo Simulator
-$ python3 drive.py --env gazebo
+$ python3 drive.py --env gazebo --model model.h5
 ```
 
 #### Step 3: Setup the browser

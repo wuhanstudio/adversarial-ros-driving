@@ -2,8 +2,8 @@
 var steer_data = [];
 var adv_data = [];
 
-  // Connecting to ROS
-  // -----------------
+// Connecting to ROS
+// -----------------
 
 var ros = new ROSLIB.Ros({
 url : 'ws://localhost:9090'
@@ -23,6 +23,7 @@ ros.on('close', function() {
     $("#customSwitchActivate").prop("checked", false);
 });
 
+// Display the original image
 var origin_img_listener = new ROSLIB.Topic({
     ros : ros,
     name : '/raw_img',
@@ -33,6 +34,7 @@ origin_img_listener.subscribe(function(msg) {
     $('#origin').attr("src", "data:image/png;base64," + msg.data);
 });
 
+// Display the input image
 var input_img_listener = new ROSLIB.Topic({
     ros : ros,
     name : '/input_img',
@@ -43,6 +45,7 @@ input_img_listener.subscribe(function(msg) {
     $('#input').attr("src", "data:image/png;base64," + msg.data);
 });
 
+// Display the perturbation
 var perturb_img_listener = new ROSLIB.Topic({
     ros : ros,
     name : '/perturb_img',
@@ -53,6 +56,7 @@ perturb_img_listener.subscribe(function(msg) {
     $('#diff').attr("src", "data:image/png;base64," + msg.data);
 });
 
+// Display the adversarial image
 var adv_img_listener = new ROSLIB.Topic({
     ros : ros,
     name : '/adv_img',
@@ -68,11 +72,7 @@ adv_img_listener.subscribe(function(msg) {
 //     $("#train_res").text("Train: " + parseFloat(data.absolute).toFixed(2) + ' ' + parseFloat(data.percentage).toFixed(2) + "%");
 // });
 
-// Sends a message to the server via sockets
-function send(message) {
-    // socket.emit('attack', message);
-};
-
+// Activate the attack
 var attack_pub = new ROSLIB.Topic({
     ros : ros,
     name : '/attack',
@@ -211,18 +211,18 @@ $(document).ready(function () {
     })
 
     // Activate traning / learning for Universal Adversarial Perturbation
-    $('#customSwitchTrain').change(function () {
-        if ($(this).prop('checked')) {
-            attack(1, $("input[name=flexRadioDefault]:checked").val() + '_train');
-            $("#origin").css("border-style", "solid");
-            $("#origin").css("border-color", "coral");
-            $("#customSwitchActivate").prop("checked", false);
-        }
-        else {
-            attack(0, $("input[name=flexRadioDefault]:checked").val() + '_train');
-            $("#origin").css("border-style", "none")
-        }
-    })
+    // $('#customSwitchTrain').change(function () {
+    //     if ($(this).prop('checked')) {
+    //         attack(1, $("input[name=flexRadioDefault]:checked").val() + '_train');
+    //         $("#origin").css("border-style", "solid");
+    //         $("#origin").css("border-color", "coral");
+    //         $("#customSwitchActivate").prop("checked", false);
+    //     }
+    //     else {
+    //         attack(0, $("input[name=flexRadioDefault]:checked").val() + '_train');
+    //         $("#origin").css("border-style", "none")
+    //     }
+    // })
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
@@ -233,21 +233,20 @@ $(document).ready(function () {
         messageType : 'geometry_msgs/Twist'
       });
     
-      listener.subscribe(function(message) {
-        // console.log('Received message on ' + listener.name + ': ' + message.linear.x);
-        $("#attack_res").text("Attack: From " + parseFloat(message.linear.x).toFixed(2) + ' to ' + parseFloat(message.linear.x).toFixed(2) );
+    listener.subscribe(function(message) {
+    // console.log('Received message on ' + listener.name + ': ' + message.angular.z);
+    // $("#attack_res").text("Attack: From " + parseFloat(message.angular.z).toFixed(2) + ' to ' + parseFloat(message.linear.z).toFixed(2) );
 
-        steer_data.push(parseFloat(message.linear.x) * 100);
-        // adv_data.push(parseFloat(data.result) * 100);
-        if (steer_data.length > 50) {
-            steer_data.shift();
-        }
-        // if (adv_data.length > 50) {
-        //     adv_data.shift();
-        // }
+    steer_data.push(parseFloat(message.angular.z) * 100);
+    adv_data.push(parseFloat(message.angular.z) * 100 + 50);
+    if (steer_data.length > 50) {
+        steer_data.shift();
+    }
+    if (adv_data.length > 50) {
+        adv_data.shift();
+    }
 
-        chart.updateSeries([{ data: steer_data }]);
-        // chart.updateSeries([{ data: steer_data }, { data: adv_data }]);
-        // listener.unsubscribe();
-      });
+    chart.updateSeries([{ data: steer_data }, { data: adv_data }]);
+    // listener.unsubscribe();
+    });
 });
