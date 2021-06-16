@@ -10,8 +10,12 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Int32
 from std_msgs.msg import String
 
+# Image Processing
+from PIL import Image as PImage
+
 # ROS Image message -> OpenCV2 image converter
 import cv2
+from io import BytesIO
 import base64
 from cv_bridge import CvBridge
 
@@ -61,8 +65,11 @@ class RosTensorFlow():
         self.adv_pub = rospy.Publisher('/adv_img', String, queue_size=1)
 
     def publish_image(self, cv_image, pub_topic):
-        _, buffer = cv2.imencode('.jpg', cv_image)
-        image_as_str = base64.b64encode(buffer).decode('utf-8')
+        # _, buffer = cv2.imencode('.jpg', cv_image)
+        img = PImage.fromarray(np.uint8(cv_image))
+        buffer = BytesIO()
+        img.save(buffer, format="JPEG")
+        image_as_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
         pub_topic.publish(image_as_str)
 
     def attack_callback(self, attack_msg):
