@@ -88,11 +88,14 @@ The following script collects image data from the topic **/camera/rgb/image_raw*
 ```
 $ cd model/data
 $ # Collect left camera data
-$ python3 ros_collect_data.py  --camera left --env gazebo
+$ python3 line_follow.py --camera left --env gazebo
+$ python3 ros_collect_data.py --camera left --env gazebo
 $ # Collect center camera data
-$ python3 ros_collect_data.py  --camera center --env gazebo
+$ python3 line_follow.py --camera center --env gazebo
+$ python3 ros_collect_data.py --camera center --env gazebo
 $ # Collect right camera data
-$ python3 ros_collect_data.py  --camera right --env gazebo
+$ python3 line_follow.py --camera right --env gazebo
+$ python3 ros_collect_data.py --camera right --env gazebo
 ```
 
 #### Step 2: Train the model
