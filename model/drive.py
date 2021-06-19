@@ -126,7 +126,7 @@ class RosTensorFlow():
                 print(angle[0][0])
 
             msg = Twist()
-            msg.linear.x = 0.2
+            msg.linear.x = 0.1
             msg.linear.y = 0
             msg.linear.z = 0
             msg.angular.z = angle[0][0]
