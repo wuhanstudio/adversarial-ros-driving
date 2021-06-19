@@ -40,6 +40,7 @@ def cmd_callback(msg):
     speed = msg.linear.x
 
 def image_callback(msg):
+    global bias
     now = datetime.now()
     current_time = now.strftime("%H-%M-%S-%f")
     try:
@@ -66,7 +67,7 @@ def save_data():
     df.to_csv('driving_log.csv', index = False)
 
 def main():
-
+    global bias
     parser = argparse.ArgumentParser(description='Data Collection')
     parser.add_argument('--camera', help='camera position', choices=['left', 'center', 'right'], type=str, required=True)
     parser.add_argument('--env', help='environment', choices=['gazebo', 'turtlebot'], type=str, required=True)
