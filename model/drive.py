@@ -72,6 +72,8 @@ class RosTensorFlow():
     def publish_image(self, cv_image, pub_topic):
         # _, buffer = cv2.imencode('.jpg', cv_image)
         img = PImage.fromarray(np.uint8(cv_image))
+        b, g, r = img.split()
+        img = PImage.merge("RGB", (r, g, b))
         buffer = BytesIO()
         img.save(buffer, format="JPEG")
         image_as_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
