@@ -47,10 +47,14 @@ $ roslaunch turtlebot3_lane turtlebot3_lane.launch
 ```
 $ roslaunch rosbridge_server rosbridge_websocket.launch
 $ cd model
+
+# You may need to put the turtlebot on track first
+# rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+
 # For real turtlebot3
-$ python3 drive.py --env turtlebot --model model.h5
+$ python3 drive.py --env turtlebot --model model_turtlebot.h5
 # For Gazebo Simulator
-$ python3 drive.py --env gazebo --model model.h5
+$ python3 drive.py --env gazebo --model model_gazebo.h5
 ```
 
 #### Step 3: Setup the browser
