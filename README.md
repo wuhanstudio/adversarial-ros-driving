@@ -104,7 +104,7 @@ $ python3 ros_collect_data.py --camera right --env gazebo
 
 #### Step 2: Train the model
 
-Once the data are collected, we can train a model that tracks the lane.
+Once the data is collected, we can train a model that tracks the lane.
 
 ```
 $ cd model
