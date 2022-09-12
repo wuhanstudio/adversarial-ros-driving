@@ -2,21 +2,9 @@
 
 > Attacking End-to-End Autonomous Driving Systems
 
-- [Adversarial Driving in ROS](#adversarial-driving-in-ros)
-  * [Overview](#overview)
-  * [Quick Start](#quick-start)
-    + [Step 0: Prerequisites](#step-0--prerequisites)
-    + [Step 1: Setup  the TurtleBot](#step-1--setup--the-turtlebot)
-    + [Step 2: Setup the server](#step-2--setup-the-server)
-    + [Step 3: Setup the browser](#step-3--setup-the-browser)
-  * [Training the model](#training-the-model)
-    + [Step 1: Collect the Data](#step-1--collect-the-data)
-    + [Step 2: Train the model](#step-2--train-the-model)
-
-
 ### Overview
 
-**Adversarial Driving**: The behaviour of end-to-end autonomous driving model can be manipulated by adding unperceivable perturbations to the input image.
+The behaviour of end-to-end autonomous driving model can be manipulated by adding unperceivable perturbations to the input image.
 
 ![](doc/adversarial-ros-driving.png)
 
@@ -31,7 +19,6 @@ $ sudo apt install ros-noetic-rosbridge-suite ros-noetic-turtlebot3-simulations 
 
 $ git clone https://github.com/wuhanstudio/adversarial-ros-driving
 $ cd adversarial-ros-driving
-
 ```
 
 #### Step 1: Setup the TurtleBot
@@ -69,7 +56,6 @@ The web page will be available at: http://localhost:8080/
 
 That's it!
 
-
 ### Training the model
 
 #### Step 1: Collect the Data
@@ -98,3 +84,24 @@ $ cd model
 $ python3 model.py
 ```
 
+## Adversarial Driving
+
+We also tested our attacks in ROS Gazebo simulator. 
+
+https://github.com/wuhanstudio/adversarial-driving
+
+[![](https://raw.githubusercontent.com/wuhanstudio/adversarial-driving/master/doc/adversarial-driving.png)](https://github.com/wuhanstudio/adversarial-driving)
+
+
+## Citation
+
+```
+@misc{han2021driving,
+  doi = {10.48550/ARXIV.2103.09151},
+  url = {https://arxiv.org/abs/2103.09151},
+  author = {Wu, Han and Yunas, Syed and Rowlands, Sareh and Ruan, Wenjie and Wahlstrom, Johan},
+  title = {Adversarial Driving: Attacking End-to-End Autonomous Driving},
+  publisher = {arXiv},
+  year = {2021},
+}
+```
