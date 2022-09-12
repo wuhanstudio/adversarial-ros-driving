@@ -21,68 +21,53 @@
 ![](doc/adversarial-ros-driving.png)
 
 
-
 ### Quick Start
 
 #### Step 0: Prerequisites
 
 ```
-$ sudo apt install ros-noetic-desktop
-$ sudo apt install ros-noetic-rosbridge-suite ros-noetic-turtlebot3-simulations ros-noetic-turtlebot3-gazebo
+$ sudo apt install ros-noetic-desktop-full
+$ sudo apt install ros-noetic-rosbridge-suite ros-noetic-turtlebot3-simulations ros-noetic-turtlebot3-gazebo ros-noetic-teleop-twist-keyboard
+
+$ git clone https://github.com/wuhanstudio/adversarial-ros-driving
+$ cd adversarial-ros-driving
+
 ```
 
-#### Step 1: Setup  the TurtleBot
+#### Step 1: Setup the TurtleBot
 
 ```
 $ cd ros_ws
 $ rosdep install --from-paths src --ignore-src -r -y
+
 $ catkin_make
 $ source devel/setup.sh
 $ export TURTLEBOT3_MODEL=waffle
 $ roslaunch turtlebot3_lane turtlebot3_lane.launch
+
+# You may need to put the turtlebot on track first
+# rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 ```
 
 #### Step 2: Setup the server
 
 ```
 $ roslaunch rosbridge_server rosbridge_websocket.launch
-$ cd model
-$ conda env create -f environment.yml
-$ conda activate adversarial-ros-driving
-
-# You may need to put the turtlebot on track first
-# rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 # For real turtlebot3
 $ python3 drive.py --env turtlebot --model model_turtlebot.h5
 # For Gazebo Simulator
 $ python3 drive.py --env gazebo --model model_gazebo.h5
+
+$ # If you use anaconda as your defaut python3 environment
+$ pip3 install catkin_pkg empy defusedxml numpy twisted autobahn tornado pymongo pillow service_identity
 ```
 
-#### Step 3: Setup the browser
-
-This is just a website, your can use any web server, just serve all the content under **client/web**.
-
-The client is built as a single executable file.
-
-```
-$ ./client
-```
-
-For Linux and Mac, or other Unix, the server can be built with:
-
-```
-$ go get -u github.com/gobuffalo/packr/packr
-$ go get github.com/gobuffalo/packr@v1.30.1
-$ packr build
-```
-
-The web page will be available at: http://localhost:3333/
+The web page will be available at: http://localhost:8080/
 
 <img src="./doc/client.png"  width="100%"/>
 
 That's it!
-
 
 
 ### Training the model

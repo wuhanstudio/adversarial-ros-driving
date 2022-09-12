@@ -1,10 +1,12 @@
 name: adversarial-ros-driving
 channels:
   - conda-forge
+  - robostack
   - defaults
 dependencies:
   - python=3.8.0
   - pip
+  - ros-noetic-desktop
   - pip:
     - eventlet==0.29.1
     - flask==1.1.2
@@ -29,4 +31,5 @@ dependencies:
     - greenlet==0.4.17
     - python-engineio==3.13.2
     - urllib3==1.26.2
+    - empy
     - rospkg

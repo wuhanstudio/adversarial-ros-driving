@@ -1,5 +1,15 @@
+import threading
 import argparse
 import utils
+import os
+
+from flask import Flask, send_from_directory
+from flask_cors import CORS
+
+# Web framework
+import socketio
+import eventlet
+import eventlet.wsgi
 
 # rospy for the subscriber
 import rospy
@@ -29,20 +39,39 @@ import tensorflow as tf
 tf.compat.v1.disable_eager_execution()
 import keras.backend as K
 
+# Initialize the server
+sio = socketio.Server(cors_allowed_origins='*', async_mode='threading')
+
+# Initialize the flask (web) app
+app = Flask(__name__)
+CORS(app)
+
+root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
+
+# Static website
+@app.route('/<path:path>', methods=['GET'])
+def static_proxy(path):
+    return send_from_directory(root, path)
+
+@app.route('/', methods=['GET'])
+def redirect_to_index():
+    return send_from_directory(root, 'index.html')
+
+
 class RosTensorFlow():
     def __init__(self, model, image_topic):
-        self.epsilon = 1
+        self.epsilon = 2
         self.graph = tf.compat.v1.get_default_graph()
 
         self.model = load_model(model)
 
-        # Right Attack (counter clockwise)
-        self.loss_right = K.mean(-self.model.output, axis=-1)
+        # Right Attack
+        self.loss_right = self.model.output
         self.grads_right = K.gradients(self.loss_right, self.model.input)
         self.delta_right = K.sign(self.grads_right[0])
 
         # Left Attack (clockwise)
-        self.loss_left = K.mean(self.model.output, axis=-1)
+        self.loss_left = -self.model.output
         self.grads_left = K.gradients(self.loss_left, self.model.input)
         self.delta_left = K.sign(self.grads_left[0])
 
@@ -105,6 +134,9 @@ class RosTensorFlow():
                 # 2 --> Right Attack
                 if self.attack == 2:
                     perturb = self.epsilon * self.sess.run(self.delta_right, feed_dict={self.model.input:np.array([input_cv_image])})
+                # 3 --> Random Noises
+                if self.attack  == 3:
+                    perturb = (np.random.randint(2, size=(160, 320, 3)) - 1) * self.epsilon
 
                 perturb = perturb.reshape(160, 320, 3)
 
@@ -134,10 +166,20 @@ class RosTensorFlow():
             msg.angular.z = angle[0][0]
             self.cmd_vel_pub.publish(msg)
 
-
     def main(self):
         rospy.spin()
 
+def websocket_server_thread():
+    global app
+    # wrap Flask application with engineio's middleware
+    app = socketio.Middleware(sio, app)
+
+    # deploy as an eventlet WSGI server
+    eventlet.wsgi.server(eventlet.listen(('', 8080)), app)
+
+def adversarial_detection_thread():
+    tensor = RosTensorFlow(args.model, image_topic);
+    tensor.main()
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Line Following')
     parser.add_argument('--env', help='environment', choices=['gazebo', 'turtlebot'], type=str, required=True)
@@ -151,5 +193,11 @@ if __name__ == '__main__':
     if args.env == 'turtlebot':       
         image_topic = "/raspicam_node/image_raw"
 
-    tensor = RosTensorFlow(args.model, image_topic);
-    tensor.main()
+    t1 = threading.Thread(target=websocket_server_thread, daemon=True)
+    t1.start()
+
+    t2 = threading.Thread(target=adversarial_detection_thread, daemon=True)
+    t2.start()
+
+    t1.join()
+    t2.join()
