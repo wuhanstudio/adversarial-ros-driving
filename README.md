@@ -2,7 +2,8 @@
 
 > Attacking End-to-End Autonomous Driving Systems
 
-### Overview
+
+[[ Talk ]](https://driving.wuhanstudio.uk) [[ Video ]]() [[ Paper ]](https://arxiv.org/abs/2103.09151) [[ Code ]](https://github.com/wuhanstudio/adversarial-ros-driving)
 
 The behaviour of end-to-end autonomous driving model can be manipulated by adding unperceivable perturbations to the input image.
 
