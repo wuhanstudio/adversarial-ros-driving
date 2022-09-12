@@ -7,7 +7,7 @@
 
 The behaviour of end-to-end autonomous driving model can be manipulated by adding unperceivable perturbations to the input image.
 
-![](doc/adversarial-ros-driving.png)
+[![](doc/adversarial-ros-driving.png)](https://driving.wuhanstudio.uk)
 
 
 ### Quick Start
@@ -25,6 +25,9 @@ $ cd adversarial-ros-driving
 #### Step 1: Setup the TurtleBot
 
 ```
+$ git clone https://github.com/wuhanstudio/adversarial-driving
+$ cd adversarial-driving
+
 $ cd ros_ws
 $ rosdep install --from-paths src --ignore-src -r -y
 
@@ -40,15 +43,26 @@ $ roslaunch turtlebot3_lane turtlebot3_lane.launch
 #### Step 2: Setup the server
 
 ```
+$ cd model/
+
+$ # CPU
+$ conda env create -f environment.yml
+$ conda activate adversarial-driving
+
+$ # GPU
+$ conda env create -f environment_gpu.yml
+$ conda activate adversarial-gpu-driving
+
+$ # If you use anaconda as your defaut python3 environment
+$ pip3 install catkin_pkg empy defusedxml numpy twisted autobahn tornado pymongo pillow service_identity
+
 $ roslaunch rosbridge_server rosbridge_websocket.launch
 
 # For real turtlebot3
 $ python3 drive.py --env turtlebot --model model_turtlebot.h5
+
 # For Gazebo Simulator
 $ python3 drive.py --env gazebo --model model_gazebo.h5
-
-$ # If you use anaconda as your defaut python3 environment
-$ pip3 install catkin_pkg empy defusedxml numpy twisted autobahn tornado pymongo pillow service_identity
 ```
 
 The web page will be available at: http://localhost:8080/
@@ -65,12 +79,15 @@ The following script collects image data from the topic **/camera/rgb/image_raw*
 
 ```
 $ cd model/data
+
 $ # Collect left camera data
 $ python3 line_follow.py --camera left --env gazebo
 $ python3 ros_collect_data.py --camera left --env gazebo
+
 $ # Collect center camera data
 $ python3 line_follow.py --camera center --env gazebo
 $ python3 ros_collect_data.py --camera center --env gazebo
+
 $ # Collect right camera data
 $ python3 line_follow.py --camera right --env gazebo
 $ python3 ros_collect_data.py --camera right --env gazebo
