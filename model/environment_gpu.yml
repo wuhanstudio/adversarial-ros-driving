@@ -10,7 +10,6 @@ dependencies:
   - cudnn
   - tensorflow-gpu==2.2.0
   - keras==2.4.3
-  - ros-noetic-desktop
   - pip:
     - eventlet==0.29.1
     - flask==2.1.0
