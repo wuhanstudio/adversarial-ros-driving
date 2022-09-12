@@ -37,7 +37,7 @@ $ export TURTLEBOT3_MODEL=waffle
 $ roslaunch turtlebot3_lane turtlebot3_lane.launch
 
 # You may need to put the turtlebot on track first
-# rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+# roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 ```
 
 #### Step 2: Setup the server
