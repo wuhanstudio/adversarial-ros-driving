@@ -104,7 +104,7 @@ $ python3 model.py
 
 ## Adversarial Driving
 
-We also tested our attacks in ROS Gazebo simulator. 
+We also tested our attacks in Udacity autonomous driving simulator. 
 
 https://github.com/wuhanstudio/adversarial-driving
 
